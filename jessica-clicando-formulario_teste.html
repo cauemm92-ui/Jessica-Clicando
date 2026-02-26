@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jessica Clicando – Ficha do Cliente</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #132240;
+    --accent: #3a7bd5;
+    --accent-light: #5b9de8;
+    --white: #ffffff;
+    --border: rgba(255,255,255,0.12);
+    --text-light: rgba(255,255,255,0.6);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--navy);
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh; color: var(--white); overflow-x: hidden;
+  }
+  body::before {
+    content: ''; position: fixed; top: -200px; right: -200px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(58,123,213,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  body::after {
+    content: ''; position: fixed; bottom: -150px; left: -150px;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(58,123,213,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .page-wrapper { max-width: 780px; margin: 0 auto; padding: 50px 20px 80px; position: relative; }
+
+  /* HEADER */
+  .header { text-align: center; margin-bottom: 40px; animation: fadeDown 0.8s ease forwards; }
+  .logo-icon {
+    width: 80px; height: 80px; margin: 0 auto 20px;
+    background: var(--navy-mid); border: 1px solid var(--border);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    position: relative; box-shadow: 0 0 40px rgba(58,123,213,0.2);
+  }
+  .logo-icon svg { width: 38px; height: 38px; color: var(--accent-light); }
+  .logo-ring {
+    position: absolute; inset: -8px; border-radius: 50%;
+    border: 1px solid rgba(58,123,213,0.25); animation: rotate 12s linear infinite;
+  }
+  .logo-ring::after {
+    content: ''; position: absolute; top: -3px; left: 50%; transform: translateX(-50%);
+    width: 6px; height: 6px; background: var(--accent-light); border-radius: 50%;
+  }
+  .brand-name { font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; font-weight: 300; letter-spacing: 0.06em; line-height: 1; margin-bottom: 6px; }
+  .brand-name span { font-style: italic; color: var(--accent-light); }
+  .brand-tagline { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.25em; color: var(--text-light); text-transform: uppercase; margin-bottom: 24px; }
+  .divider { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); margin: 0 auto; }
+
+  /* STEPS */
+  .steps { display: flex; align-items: center; justify-content: center; margin-bottom: 32px; animation: fadeUp 0.8s ease 0.1s both; }
+  .step { display: flex; align-items: center; gap: 8px; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); transition: color 0.4s; }
+  .step.active { color: var(--white); }
+  .step.done { color: var(--accent-light); }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; transition: all 0.4s; flex-shrink: 0; }
+  .step.active .step-num { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 16px rgba(58,123,213,0.4); }
+  .step.done .step-num { background: rgba(58,123,213,0.2); border-color: var(--accent-light); color: var(--accent-light); }
+  .step-line { width: 40px; height: 1px; background: rgba(255,255,255,0.12); margin: 0 4px; }
+
+  /* CARDS */
+  .card { background: var(--navy-mid); border: 1px solid var(--border); border-radius: 16px; padding: 40px; margin-bottom: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); display: none; }
+  .card.active { display: block; animation: fadeUp 0.5s ease forwards; }
+
+  /* SECTION TITLE */
+  .section-title { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .section-title::before { content: ''; width: 4px; height: 18px; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
+
+  /* FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-light); }
+  input, select, textarea {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; color: var(--white); font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem; font-weight: 300; padding: 12px 14px; transition: all 0.25s ease;
+    outline: none; width: 100%;
+  }
+  input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.2); }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); background: rgba(58,123,213,0.07); box-shadow: 0 0 0 3px rgba(58,123,213,0.12); }
+  select option { background: var(--navy-mid); color: var(--white); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* SIGNATURE FIELD — typed, renders in cursive */
+  .signature-field-wrap { position: relative; }
+  .signature-input {
+    font-family: 'Dancing Script', cursive !important;
+    font-size: 1.3rem !important;
+    font-weight: 600 !important;
+    color: var(--accent-light) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.3) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    padding: 8px 4px !important;
+    letter-spacing: 0.02em;
+  }
+  .signature-input:focus { border-bottom-color: var(--accent) !important; box-shadow: none !important; background: transparent !important; }
+  .signature-hint { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); margin-top: 4px; }
+
+  /* Signature preview in contract */
+  .sig-preview-box {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 20px; min-height: 70px;
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 6px;
+  }
+  .sig-preview-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.5rem; font-weight: 600;
+    color: var(--accent-light); min-height: 36px;
+  }
+  .sig-preview-line { border-bottom: 1px solid rgba(255,255,255,0.2); }
+  .sig-preview-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-light); margin-top: 6px; }
+
+  /* AUTORIZACAO */
+  .autorizacao-box { background: rgba(58,123,213,0.07); border: 1px solid rgba(58,123,213,0.2); border-radius: 10px; padding: 20px; }
+  .autorizacao-text { font-size: 0.82rem; font-weight: 300; color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 16px; }
+  .autorizacao-text strong { color: var(--white); font-weight: 500; }
+  .radio-group { display: flex; gap: 16px; }
+  .radio-label { display: flex; align-items: center; gap: 9px; cursor: pointer; font-size: 0.82rem; font-weight: 500; color: var(--white); text-transform: none; }
+  .radio-label input[type="radio"] { width: 18px; height: 18px; padding: 0; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+
+  /* BUTTONS */
+  .btn { padding: 14px 28px; border: none; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: var(--white); box-shadow: 0 8px 24px rgba(58,123,213,0.3); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(58,123,213,0.4); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-ghost { background: transparent; color: var(--text-light); border: 1px solid var(--border); }
+  .btn-ghost:hover { color: var(--white); border-color: rgba(255,255,255,0.3); }
+  .btn-row { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; gap: 12px; }
+
+  /* CONTRACT */
+  .contract-header { text-align: center; padding-bottom: 24px; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
+  .contract-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+  .contract-date { font-size: 0.72rem; color: var(--text-light); letter-spacing: 0.08em; }
+  .contract-parties { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 28px; }
+  .party-row { display: grid; grid-template-columns: 150px 1fr; gap: 8px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .party-row:last-child { border-bottom: none; }
+  .party-key { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-light); }
+  .party-val { font-size: 0.88rem; color: var(--white); }
+  .party-val.hl { color: var(--accent-light); font-weight: 500; }
+  .contract-clauses { margin-bottom: 28px; }
+  .clause { margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .clause:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .clause-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .clause-num { width: 22px; height: 22px; background: rgba(58,123,213,0.2); border: 1px solid rgba(58,123,213,0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 700; flex-shrink: 0; color: var(--accent-light); }
+  .clause-body { font-size: 0.84rem; font-weight: 300; color: rgba(255,255,255,0.78); line-height: 1.75; }
+  .clause-body strong { color: var(--white); font-weight: 500; }
+  .placeholder-notice { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,193,7,0.1); border: 1px dashed rgba(255,193,7,0.4); border-radius: 6px; padding: 4px 10px; font-size: 0.74rem; color: #ffc107; font-style: italic; margin-bottom: 10px; }
+
+  /* CONSENT */
+  .consent-box { background: rgba(58,123,213,0.08); border: 1px solid rgba(58,123,213,0.25); border-radius: 12px; padding: 22px; margin-top: 28px; }
+  .consent-label { display: flex; align-items: flex-start; gap: 14px; cursor: pointer; }
+  .consent-label input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; margin-top: 2px; padding: 0; }
+  .consent-text { font-size: 0.84rem; font-weight: 400; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .consent-text strong { color: var(--white); }
+
+  /* SUCCESS */
+  .success-inner { text-align: center; padding: 20px 0; }
+  .success-check { width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), var(--accent-light)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 8px 32px rgba(58,123,213,0.5); }
+  .success-inner h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 300; margin-bottom: 12px; }
+  .success-inner p { font-size: 0.84rem; font-weight: 300; color: var(--text-light); line-height: 1.7; }
+  .success-detail { margin-top: 24px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: left; }
+  .success-detail-row { display: flex; gap: 10px; padding: 5px 0; font-size: 0.78rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .success-detail-row:last-child { border-bottom: none; }
+  .success-detail-row span:first-child { color: var(--text-light); min-width: 110px; }
+
+  /* FOOTER */
+  .footer { text-align: center; margin-top: 30px; animation: fadeUp 0.8s ease 0.4s both; }
+  .footer p { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--text-light); text-transform: uppercase; }
+
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes rotate { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+
+  @media (max-width: 580px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid .full { grid-column: 1; }
+    .card { padding: 24px 18px; }
+    .brand-name { font-size: 2rem; }
+    .step-line { width: 20px; }
+    .party-row { grid-template-columns: 1fr; gap: 2px; }
+    .btn-row { flex-direction: column; }
+    .btn-row .btn { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-icon">
+      <div class="logo-ring"></div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"/>
+      </svg>
+    </div>
+    <div class="brand-name">Jessica <span>Clicando</span></div>
+    <div class="brand-tagline">Fotografia · Momentos que duram para sempre</div>
+    <div class="divider"></div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps">
+    <div class="step active" id="step1"><div class="step-num" id="sn1">1</div><span>Ficha</span></div>
+    <div class="step-line"></div>
+    <div class="step" id="step2"><div class="step-num" id="sn2">2</div><span>Contrato</span></div>
+    <div class="step-line"></div>
+    <div class="step" id="step3"><div class="step-num" id="sn3">3</div><span>Confirmação</span></div>
+  </div>
+
+  <!-- ===== STEP 1: FORMULÁRIO ===== -->
+  <div class="card active" id="cardForm">
+    <form id="clientForm" onsubmit="return false;">
+
+      <div class="section-title">Dados do Cliente</div>
+      <div class="form-grid" style="margin-bottom:28px;">
+        <div class="field full">
+          <label>Nome completo da mãe</label>
+          <input type="text" id="nome_mae" placeholder="Nome completo da mãe" required>
+        </div>
+        <div class="field full">
+          <label>Nome completo da criança</label>
+          <input type="text" id="nome_crianca" placeholder="Nome completo da criança (ou como será chamada)">
+        </div>
+        <div class="field">
+          <label>CPF</label>
+          <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)">
+        </div>
+        <div class="field">
+          <label>Telefone / WhatsApp</label>
+          <input type="tel" id="telefone" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhone(this)">
+        </div>
+        <div class="field full">
+          <label>E-mail</label>
+          <input type="email" id="email" placeholder="seuemail@exemplo.com">
+        </div>
+        <div class="field">
+          <label>Tipo de Ensaio</label>
+          <select id="tipo_ensaio" required>
+            <option value="" disabled selected>Selecione…</option>
+            <option>Recém-nascido (Newborn)</option>
+            <option>Gestante</option>
+            <option>Parto</option>
+            <option>Família</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Data prevista (parto/nascimento)</label>
+          <input type="date" id="data_prevista">
+        </div>
+      </div>
+
+      <div class="section-title">Dados do Ensaio</div>
+      <div class="form-grid" style="margin-bottom:28px;">
+        <div class="field">
+          <label>Data do Ensaio</label>
+          <input type="date" id="data_ensaio" required>
+        </div>
+        <div class="field">
+          <label>Pacote / Valor Contratado</label>
+          <input type="text" id="pacote" placeholder="Ex: Pacote Newborn Completo">
+        </div>
+        <div class="field full">
+          <label>Observações e Preferências</label>
+          <textarea id="observacoes" placeholder="Cores, temas, acessórios, pedidos especiais..."></textarea>
+        </div>
+      </div>
+
+      <div class="section-title">Autorização de Uso de Imagem</div>
+      <div class="autorizacao-box" style="margin-bottom:28px;">
+        <p class="autorizacao-text">
+          Eu, <strong id="aut_nome_live">___________________________</strong>, portador(a) do CPF informado acima,
+          autorizo ou não o estúdio <strong>Jessica Clicando Fotografia</strong> a utilizar as fotografias
+          produzidas durante o ensaio para fins de divulgação em redes sociais, portfólio, site e materiais
+          promocionais, sem ônus ao fotógrafo e sem identificação obrigatória do(s) retratado(s).
+        </p>
+        <div class="field">
+          <label style="margin-bottom:10px;">Autorização de uso de imagem</label>
+          <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="aut_img" value="Sim" required> ✔ Sim, autorizo</label>
+            <label class="radio-label"><input type="radio" name="aut_img" value="Não"> ✖ Não autorizo</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Assinatura</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Local e Data</label>
+          <input type="text" id="local_data" placeholder="Cidade, DD/MM/AAAA">
+        </div>
+        <div class="field">
+          <label>Assinatura — Digite seu nome completo</label>
+          <div class="signature-field-wrap">
+            <input type="text" id="assinatura" class="signature-input" placeholder="Seu nome aqui…" required oninput="liveSign(this.value)">
+          </div>
+          <span class="signature-hint">Seu nome será exibido em formato cursivo como assinatura</span>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <div></div>
+        <button type="button" class="btn btn-primary" onclick="goToContract()">Avançar para o Contrato →</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ===== STEP 2: CONTRATO ===== -->
+  <div class="card" id="cardContract">
+
+    <div class="contract-header">
+      <h2>Contrato de Prestação de Serviços Fotográficos</h2>
+      <div class="contract-date" id="contractDate"></div>
+    </div>
+
+    <div class="section-title">Identificação das Partes</div>
+    <div class="contract-parties">
+      <div class="party-row"><span class="party-key">Fotógrafa</span><span class="party-val hl">Jessica Clicando Fotografia</span></div>
+      <div class="party-row"><span class="party-key">Cliente (Mãe)</span><span class="party-val" id="c_mae">—</span></div>
+      <div class="party-row"><span class="party-key">Nome da Criança</span><span class="party-val" id="c_crianca">—</span></div>
+      <div class="party-row"><span class="party-key">CPF</span><span class="party-val" id="c_cpf">—</span></div>
+      <div class="party-row"><span class="party-key">Tipo de Ensaio</span><span class="party-val hl" id="c_tipo">—</span></div>
+      <div class="party-row"><span class="party-key">Data do Ensaio</span><span class="party-val" id="c_data">—</span></div>
+      <div class="party-row"><span class="party-key">Pacote / Valor</span><span class="party-val" id="c_pacote">—</span></div>
+    </div>
+
+    <div class="section-title" style="margin-top:28px;">Cláusulas Contratuais</div>
+    <div class="contract-clauses">
+      <div class="clause">
+        <div class="clause-title"><div class="clause-num">1</div>Pagamento e Sinal de Entrada</div>
+        <div class="clause-body">
+          <div class="placeholder-notice">✏️ Substitua pelo texto da Jessica</div><br>
+          Para confirmar o agendamento, o(a) cliente deverá efetuar o pagamento de <strong>50% do valor total</strong> do pacote contratado como sinal de entrada. O saldo restante deverá ser quitado até o dia do ensaio. Em caso de não pagamento do saldo na data acordada, o ensaio poderá ser cancelado sem devolução do sinal.
+        </div>
+      </div>
+      <div class="clause">
+        <div class="clause-title"><div class="clause-num">2</div>Política de Cancelamento e Remarcação</div>
+        <div class="clause-body">
+          <div class="placeholder-notice">✏️ Substitua pelo texto da Jessica</div><br>
+          Cancelamentos realizados com <strong>mais de 7 dias de antecedência</strong> terão o sinal devolvido integralmente. Cancelamentos com menos de 7 dias implicarão na perda do sinal. A remarcação poderá ser feita <strong>uma única vez</strong> com no mínimo 48h de antecedência, sujeita à disponibilidade de agenda.
+        </div>
+      </div>
+      <div class="clause">
+        <div class="clause-title"><div class="clause-num">3</div>Entrega das Fotografias</div>
+        <div class="clause-body">
+          <div class="placeholder-notice">✏️ Substitua pelo texto da Jessica</div><br>
+          As fotografias editadas serão entregues em até <strong>30 dias corridos</strong> após a realização do ensaio, via galeria online compartilhada por e-mail ou WhatsApp. O número de fotos seguirá o especificado no pacote contratado.
+        </div>
+      </div>
+      <div class="clause">
+        <div class="clause-title"><div class="clause-num">4</div>Direitos de Uso das Imagens</div>
+        <div class="clause-body">
+          <div class="placeholder-notice">✏️ Adicione mais detalhes se necessário</div><br>
+          As fotografias produzidas são de autoria de <strong>Jessica Clicando Fotografia</strong>, que detém os direitos autorais sobre as mesmas. A utilização das imagens para divulgação pelo estúdio está condicionada à autorização fornecida pelo(a) cliente: <strong id="c_autorizacao">—</strong>.
+        </div>
+      </div>
+    </div>
+
+    <!-- Assinatura no contrato -->
+    <div class="section-title" style="margin-top:28px;">Assinatura do(a) Cliente</div>
+    <div class="form-grid" style="margin-bottom:0;">
+      <div class="field">
+        <label>Local e Data</label>
+        <div style="font-size:0.9rem; font-weight:300; padding: 12px 4px; color: var(--white);" id="c_local_data">—</div>
+        <div style="border-bottom: 1px solid rgba(255,255,255,0.15); margin-top:4px;"></div>
+      </div>
+      <div class="field">
+        <label>Assinatura do(a) Responsável</label>
+        <div class="sig-preview-box">
+          <div class="sig-preview-text" id="sig_preview"></div>
+          <div class="sig-preview-line"></div>
+          <div class="sig-preview-label">Assinatura Digital</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aceite -->
+    <div class="consent-box">
+      <label class="consent-label">
+        <input type="checkbox" id="consentCheck" onchange="toggleConfirm()">
+        <span class="consent-text">
+          Eu, <strong id="c_nome_aceite">___</strong>, li e compreendi todas as cláusulas deste contrato e
+          <strong>concordo integralmente com os termos</strong> acima estabelecidos com o estúdio
+          <strong>Jessica Clicando Fotografia</strong>.
+        </span>
+      </label>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn btn-ghost" onclick="goBack()">← Voltar</button>
+      <button type="button" class="btn btn-primary" id="confirmBtn" onclick="finalize()" disabled>✦ Confirmar e Finalizar</button>
+    </div>
+  </div>
+
+  <!-- ===== STEP 3: CONFIRMAÇÃO ===== -->
+  <div class="card" id="cardSuccess">
+    <div class="success-inner">
+      <div class="success-check">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h3>Tudo Certo! 🎉</h3>
+      <p>Ficha preenchida e contrato aceito com sucesso.<br>Em breve a Jessica entrará em contato para confirmar todos os detalhes.</p>
+      <div class="success-detail" id="successDetail"></div>
+      <button type="button" class="btn btn-primary" onclick="downloadPDF()" style="margin-top:24px;width:100%;">
+        ⬇ Baixar Contrato em PDF
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>© 2025 Jessica Clicando Fotografia · Todos os direitos reservados</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  // Dados globais para o PDF
+  let dadosContrato = {};
+
+  // Live updates
+  document.getElementById('nome_mae').addEventListener('input', function() {
+    document.getElementById('aut_nome_live').textContent = this.value || '___________________________';
+  });
+
+  function liveSign(val) {
+    document.getElementById('sig_preview').textContent = val;
+  }
+
+  function maskCPF(el) {
+    let v = el.value.replace(/\D/g,'').substring(0,11);
+    v = v.replace(/(\d{3})(\d)/,'$1.$2');
+    v = v.replace(/(\d{3})(\d)/,'$1.$2');
+    v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+    el.value = v;
+  }
+
+  function maskPhone(el) {
+    let v = el.value.replace(/\D/g,'').substring(0,11);
+    if(v.length >= 7) v = v.replace(/^(\d{2})(\d{5})(\d{0,4})/,'($1) $2-$3');
+    else if(v.length >= 3) v = v.replace(/^(\d{2})(\d{0,5})/,'($1) $2');
+    el.value = v;
+  }
+
+  function fmtDate(d) {
+    if(!d) return '—';
+    const [y,m,dd] = d.split('-');
+    return `${dd}/${m}/${y}`;
+  }
+
+  function goToContract() {
+    // Manual validation
+    const nomeEl   = document.getElementById('nome_mae');
+    const tipoEl   = document.getElementById('tipo_ensaio');
+    const dataEEl  = document.getElementById('data_ensaio');
+    const assinEl  = document.getElementById('assinatura');
+    const autR     = document.querySelector('input[name="aut_img"]:checked');
+
+    if(!nomeEl.value.trim())  { nomeEl.focus(); nomeEl.style.borderColor='#e05b5b'; setTimeout(()=>nomeEl.style.borderColor='',2000); return; }
+    if(!tipoEl.value)         { tipoEl.focus(); tipoEl.style.borderColor='#e05b5b'; setTimeout(()=>tipoEl.style.borderColor='',2000); return; }
+    if(!dataEEl.value)        { dataEEl.focus(); dataEEl.style.borderColor='#e05b5b'; setTimeout(()=>dataEEl.style.borderColor='',2000); return; }
+    if(!assinEl.value.trim()) { assinEl.focus(); assinEl.style.borderColor='#e05b5b'; setTimeout(()=>assinEl.style.borderColor='',2000); return; }
+    if(!autR)                 { alert('Por favor, informe a autorização de uso de imagem.'); return; }
+
+    const mae      = nomeEl.value;
+    const crianca  = document.getElementById('nome_crianca').value;
+    const cpf      = document.getElementById('cpf').value;
+    const tipo     = tipoEl.value;
+    const dataE    = dataEEl.value;
+    const pacote   = document.getElementById('pacote').value;
+    const localD   = document.getElementById('local_data').value;
+    const assin    = assinEl.value;
+    const aut      = autR.value;
+
+    document.getElementById('c_mae').textContent       = mae || '—';
+    document.getElementById('c_crianca').textContent   = crianca || '—';
+    document.getElementById('c_cpf').textContent       = cpf || '—';
+    document.getElementById('c_tipo').textContent      = tipo || '—';
+    document.getElementById('c_data').textContent      = fmtDate(dataE);
+    document.getElementById('c_pacote').textContent    = pacote || '—';
+    document.getElementById('c_autorizacao').textContent = aut;
+    document.getElementById('c_nome_aceite').textContent = mae || '___';
+    document.getElementById('c_local_data').textContent = localD || '—';
+    document.getElementById('sig_preview').textContent = assin;
+    document.getElementById('contractDate').textContent =
+      'Gerado em ' + new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'});
+
+    setStep(2);
+    document.getElementById('cardForm').classList.remove('active');
+    document.getElementById('cardContract').classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function goBack() {
+    document.getElementById('cardContract').classList.remove('active');
+    document.getElementById('cardForm').classList.add('active');
+    document.getElementById('consentCheck').checked = false;
+    toggleConfirm();
+    setStep(1);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function toggleConfirm() {
+    document.getElementById('confirmBtn').disabled = !document.getElementById('consentCheck').checked;
+  }
+
+  function finalize() {
+    const mae   = document.getElementById('nome_mae').value;
+    const crianca = document.getElementById('nome_crianca').value;
+    const cpf   = document.getElementById('cpf').value;
+    const tipo  = document.getElementById('tipo_ensaio').value;
+    const dataE = document.getElementById('data_ensaio').value;
+    const pacote= document.getElementById('pacote').value;
+    const email = document.getElementById('email').value;
+    const telefone = document.getElementById('telefone').value;
+    const assin = document.getElementById('assinatura').value;
+    const localD = document.getElementById('local_data').value;
+    const autR  = document.querySelector('input[name="aut_img"]:checked');
+    const aut   = autR ? autR.value : '—';
+    const dataP = document.getElementById('data_prevista').value;
+    const obs   = document.getElementById('observacoes').value;
+
+    // Salva para o PDF
+    dadosContrato = { mae, crianca, cpf, tipo, dataE: fmtDate(dataE), pacote, email, telefone, assin, localD, aut, dataP: fmtDate(dataP), obs,
+      dataGeracao: new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'}) };
+
+    document.getElementById('successDetail').innerHTML = `
+      <div class="success-detail-row"><span>Cliente</span><span>${mae}</span></div>
+      <div class="success-detail-row"><span>Ensaio</span><span>${tipo}</span></div>
+      <div class="success-detail-row"><span>Data</span><span>${fmtDate(dataE)}</span></div>
+      ${pacote ? `<div class="success-detail-row"><span>Pacote</span><span>${pacote}</span></div>` : ''}
+      ${email  ? `<div class="success-detail-row"><span>E-mail</span><span>${email}</span></div>` : ''}
+      <div class="success-detail-row"><span>Assinatura</span><span style="font-family:'Dancing Script',cursive;font-size:1.1rem;color:var(--accent-light);">${assin}</span></div>
+      <div class="success-detail-row"><span>Contrato</span><span style="color:#5b9de8;font-weight:500;">✓ Aceito digitalmente</span></div>
+    `;
+
+    setStep(3);
+    document.getElementById('cardContract').classList.remove('active');
+    document.getElementById('cardSuccess').classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const d = dadosContrato;
+    const navy  = [10, 22, 40];
+    const blue  = [58, 123, 213];
+    const white = [255, 255, 255];
+    const gray  = [180, 195, 215];
+    const darkText = [20, 40, 70];
+
+    const pw = 210; // page width
+    const margin = 18;
+    const contentW = pw - margin * 2;
+    let y = 0;
+
+    // ── HEADER BACKGROUND ──
+    doc.setFillColor(...navy);
+    doc.rect(0, 0, pw, 42, 'F');
+
+    // Logo circle
+    doc.setFillColor(...blue);
+    doc.circle(pw/2, 16, 8, 'F');
+    doc.setTextColor(...white);
+    doc.setFontSize(14);
+    doc.setFont('helvetica','bold');
+    doc.text('JC', pw/2, 19, {align:'center'});
+
+    // Brand name
+    doc.setFontSize(18);
+    doc.setFont('helvetica','normal');
+    doc.text('Jessica Clicando Fotografia', pw/2, 30, {align:'center'});
+    doc.setFontSize(7);
+    doc.setTextColor(...gray);
+    doc.text('FOTOGRAFIA · MOMENTOS QUE DURAM PARA SEMPRE', pw/2, 36, {align:'center'});
+
+    y = 52;
+
+    // ── CONTRACT TITLE ──
+    doc.setFillColor(...blue);
+    doc.rect(margin, y, contentW, 10, 'F');
+    doc.setTextColor(...white);
+    doc.setFontSize(10);
+    doc.setFont('helvetica','bold');
+    doc.text('CONTRATO DE PRESTAÇÃO DE SERVIÇOS FOTOGRÁFICOS', pw/2, y+6.5, {align:'center'});
+    y += 16;
+
+    doc.setTextColor(100,120,150);
+    doc.setFontSize(8);
+    doc.setFont('helvetica','normal');
+    doc.text(`Gerado em ${d.dataGeracao}`, pw/2, y, {align:'center'});
+    y += 10;
+
+    // ── SECTION: IDENTIFICAÇÃO ──
+    function sectionHeader(title) {
+      doc.setFillColor(20, 42, 80);
+      doc.rect(margin, y, contentW, 8, 'F');
+      doc.setDrawColor(...blue);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, y, 3, 8, 'F');
+      doc.setFillColor(...blue);
+      doc.rect(margin, y, 3, 8, 'F');
+      doc.setTextColor(...white);
+      doc.setFontSize(8);
+      doc.setFont('helvetica','bold');
+      doc.text(title, margin + 6, y + 5.2);
+      y += 12;
+    }
+
+    function dataRow(label, value, shade) {
+      if(shade) { doc.setFillColor(245,248,252); doc.rect(margin, y-1, contentW, 7, 'F'); }
+      doc.setTextColor(100,120,150);
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica','bold');
+      doc.text(label, margin + 2, y + 4);
+      doc.setTextColor(...darkText);
+      doc.setFont('helvetica','normal');
+      doc.text(value || '—', margin + 48, y + 4);
+      y += 7;
+    }
+
+    function checkPage() {
+      if(y > 265) { doc.addPage(); doc.setFillColor(...navy); doc.rect(0,0,pw,8,'F'); y = 16; }
+    }
+
+    sectionHeader('IDENTIFICAÇÃO DAS PARTES');
+    dataRow('Fotógrafa:', 'Jessica Clicando Fotografia', false);
+    dataRow('Cliente (Mãe):', d.mae, true);
+    dataRow('Nome da Criança:', d.crianca, false);
+    dataRow('CPF:', d.cpf, true);
+    dataRow('Telefone / WhatsApp:', d.telefone, false);
+    dataRow('E-mail:', d.email, true);
+    dataRow('Tipo de Ensaio:', d.tipo, false);
+    dataRow('Data do Ensaio:', d.dataE, true);
+    if(d.dataP !== '—') dataRow('Data Prevista:', d.dataP, false);
+    dataRow('Pacote / Valor:', d.pacote, true);
+    dataRow('Autorização de Imagem:', d.aut, false);
+    y += 4;
+
+    // ── SECTION: CLÁUSULAS ──
+    checkPage();
+    sectionHeader('CLÁUSULAS CONTRATUAIS');
+
+    function clause(num, title, text) {
+      checkPage();
+      // Clause header
+      doc.setFillColor(30, 58, 95);
+      doc.circle(margin + 4, y + 3.5, 3.5, 'F');
+      doc.setTextColor(...white);
+      doc.setFontSize(7);
+      doc.setFont('helvetica','bold');
+      doc.text(String(num), margin + 4, y + 5, {align:'center'});
+
+      doc.setTextColor(...blue);
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica','bold');
+      doc.text(title.toUpperCase(), margin + 10, y + 5);
+      y += 10;
+
+      doc.setTextColor(...darkText);
+      doc.setFontSize(8);
+      doc.setFont('helvetica','normal');
+      const lines = doc.splitTextToSize(text, contentW - 4);
+      lines.forEach(line => {
+        checkPage();
+        doc.text(line, margin + 2, y);
+        y += 5;
+      });
+
+      // separator
+      doc.setDrawColor(220,228,240);
+      doc.setLineWidth(0.3);
+      doc.line(margin, y + 2, margin + contentW, y + 2);
+      y += 7;
+    }
+
+    clause(1, 'Pagamento e Sinal de Entrada',
+      'Para confirmar o agendamento, o(a) cliente deverá efetuar o pagamento de 50% do valor total do pacote contratado como sinal de entrada. O saldo restante deverá ser quitado até o dia do ensaio. Em caso de não pagamento do saldo na data acordada, o ensaio poderá ser cancelado sem devolução do sinal.');
+
+    clause(2, 'Política de Cancelamento e Remarcação',
+      'Cancelamentos realizados com mais de 7 dias de antecedência terão o sinal devolvido integralmente. Cancelamentos com menos de 7 dias implicarão na perda do sinal. A remarcação poderá ser feita uma única vez com no mínimo 48h de antecedência, sujeita à disponibilidade de agenda.');
+
+    clause(3, 'Entrega das Fotografias',
+      'As fotografias editadas serão entregues em até 30 dias corridos após a realização do ensaio, via galeria online compartilhada por e-mail ou WhatsApp. O número de fotos seguirá o especificado no pacote contratado.');
+
+    clause(4, 'Direitos de Uso das Imagens',
+      `As fotografias produzidas são de autoria de Jessica Clicando Fotografia, que detém os direitos autorais sobre as mesmas. A utilização das imagens para divulgação pelo estúdio está condicionada à autorização fornecida pelo(a) cliente: ${d.aut}.`);
+
+    // ── OBSERVATIONS ──
+    if(d.obs && d.obs.trim()) {
+      checkPage();
+      sectionHeader('OBSERVAÇÕES E PREFERÊNCIAS');
+      doc.setTextColor(...darkText);
+      doc.setFontSize(8);
+      doc.setFont('helvetica','normal');
+      const obsLines = doc.splitTextToSize(d.obs, contentW - 4);
+      obsLines.forEach(line => { checkPage(); doc.text(line, margin + 2, y); y += 5; });
+      y += 4;
+    }
+
+    // ── ACEITE ──
+    checkPage();
+    sectionHeader('ACEITE E ASSINATURA DIGITAL');
+
+    doc.setFillColor(235, 242, 252);
+    doc.roundedRect(margin, y, contentW, 22, 2, 2, 'F');
+    doc.setTextColor(60, 90, 140);
+    doc.setFontSize(8);
+    doc.setFont('helvetica','normal');
+    const aceiteText = `Eu, ${d.mae}, li e compreendi todas as cláusulas deste contrato e concordo integralmente com os termos acima estabelecidos com o estúdio Jessica Clicando Fotografia.`;
+    const aceiteLines = doc.splitTextToSize(aceiteText, contentW - 8);
+    let ay = y + 6;
+    aceiteLines.forEach(line => { doc.text(line, margin + 4, ay); ay += 5; });
+    y += 26;
+
+    // Signature box
+    checkPage();
+    const sigBoxY = y;
+    doc.setDrawColor(...blue);
+    doc.setLineWidth(0.4);
+    doc.rect(margin, sigBoxY, contentW/2 - 4, 24);
+
+    // Signature text in cursive-like style
+    doc.setTextColor(...blue);
+    doc.setFontSize(16);
+    doc.setFont('times','bolditalic');
+    doc.text(d.assin, margin + 4, sigBoxY + 14);
+
+    doc.setDrawColor(180,195,215);
+    doc.setLineWidth(0.3);
+    doc.line(margin + 2, sigBoxY + 17, margin + contentW/2 - 6, sigBoxY + 17);
+
+    doc.setTextColor(100,120,150);
+    doc.setFontSize(7);
+    doc.setFont('helvetica','normal');
+    doc.text('Assinatura Digital do(a) Responsável', margin + 4, sigBoxY + 22);
+
+    // Local/Data
+    doc.setFontSize(8);
+    doc.setTextColor(...darkText);
+    doc.text(d.localD || '—', margin + contentW/2 + 4, sigBoxY + 10);
+    doc.setDrawColor(180,195,215);
+    doc.line(margin + contentW/2 + 2, sigBoxY + 12, margin + contentW - 2, sigBoxY + 12);
+    doc.setTextColor(100,120,150);
+    doc.setFontSize(7);
+    doc.text('Local e Data', margin + contentW/2 + 4, sigBoxY + 17);
+
+    y = sigBoxY + 30;
+
+    // ── FOOTER ──
+    const pageCount = doc.internal.getNumberOfPages();
+    for(let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFillColor(...navy);
+      doc.rect(0, 287, pw, 10, 'F');
+      doc.setTextColor(...gray);
+      doc.setFontSize(7);
+      doc.text('© 2025 Jessica Clicando Fotografia · Todos os direitos reservados', pw/2, 293, {align:'center'});
+      doc.text(`Página ${i} de ${pageCount}`, pw - margin, 293, {align:'right'});
+    }
+
+    // ── SAVE ──
+    const filename = `Contrato_JessicaClicando_${(d.mae||'cliente').replace(/\s+/g,'_')}.pdf`;
+    doc.save(filename);
+  }
+
+  function setStep(n) {
+    for(let i = 1; i <= 3; i++) {
+      const s = document.getElementById('step'+i);
+      const sn = document.getElementById('sn'+i);
+      s.classList.remove('active','done');
+      if(i < n)      { s.classList.add('done');   sn.textContent = '✓'; }
+      else if(i===n) { s.classList.add('active');  sn.textContent = i;  }
+      else           {                             sn.textContent = i;  }
+    }
+  }
+</script>
+</body>
+</html>
