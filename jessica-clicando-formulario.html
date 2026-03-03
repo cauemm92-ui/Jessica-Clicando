@@ -965,89 +965,69 @@
     if (rp) rp.style.display = isParto ? 'none' : 'flex';
   }
 
-  // ── ALL EVENT LISTENERS — iOS/mobile safe ──
-  document.addEventListener('DOMContentLoaded', function() {
+  // ── EVENT LISTENERS (inline, sem DOMContentLoaded) ──
 
-    // Inicializa EmailJS
+  function initEvents() {
+    // EmailJS
     if (typeof emailjs !== 'undefined') {
       emailjs.init('wwgGzvP9daTezj3cH');
     }
 
-    // Nome mae → live update on auth text
-    const nomeMaeEl = document.getElementById('nome_mae');
+    // Nome mae → texto autorização
+    var nomeMaeEl = document.getElementById('nome_mae');
     if (nomeMaeEl) {
-      ['input','change','keyup'].forEach(function(evt) {
-        nomeMaeEl.addEventListener(evt, function() {
-          const el = document.getElementById('aut_nome_live');
-          if (el) el.textContent = this.value || '___________________________';
-        });
-      });
+      nomeMaeEl.addEventListener('input',  function() { var el=document.getElementById('aut_nome_live'); if(el) el.textContent=this.value||'___________________________'; });
+      nomeMaeEl.addEventListener('keyup',  function() { var el=document.getElementById('aut_nome_live'); if(el) el.textContent=this.value||'___________________________'; });
     }
 
-    // Assinatura → live preview
-    const assinEl = document.getElementById('assinatura');
+    // Assinatura → prévia
+    var assinEl = document.getElementById('assinatura');
     if (assinEl) {
-      ['input','change','keyup'].forEach(function(evt) {
-        assinEl.addEventListener(evt, function() {
-          const p1 = document.getElementById('sig_preview');
-          const p2 = document.getElementById('sig_preview_contract');
-          if (p1) p1.textContent = this.value || 'Sua assinatura';
-          if (p2) p2.textContent = this.value || '—';
-        });
-      });
+      assinEl.addEventListener('input',  function() { var p1=document.getElementById('sig_preview'); var p2=document.getElementById('sig_preview_contract'); if(p1) p1.textContent=this.value||'Sua assinatura'; if(p2) p2.textContent=this.value||'—'; });
+      assinEl.addEventListener('keyup',  function() { var p1=document.getElementById('sig_preview'); var p2=document.getElementById('sig_preview_contract'); if(p1) p1.textContent=this.value||'Sua assinatura'; if(p2) p2.textContent=this.value||'—'; });
+      assinEl.addEventListener('change', function() { var p1=document.getElementById('sig_preview'); var p2=document.getElementById('sig_preview_contract'); if(p1) p1.textContent=this.value||'Sua assinatura'; if(p2) p2.textContent=this.value||'—'; });
     }
 
     // CPF mask
-    const cpfEl = document.getElementById('cpf');
+    var cpfEl = document.getElementById('cpf');
     if (cpfEl) {
-      ['input','keyup'].forEach(function(evt) {
-        cpfEl.addEventListener(evt, function() { maskCPF(this); });
-      });
+      cpfEl.addEventListener('input', function() { maskCPF(this); });
+      cpfEl.addEventListener('keyup', function() { maskCPF(this); });
     }
 
-    // Phone mask
-    const telEl = document.getElementById('telefone');
+    // Telefone mask
+    var telEl = document.getElementById('telefone');
     if (telEl) {
-      ['input','keyup'].forEach(function(evt) {
-        telEl.addEventListener(evt, function() { maskPhone(this); });
-      });
+      telEl.addEventListener('input', function() { maskPhone(this); });
+      telEl.addEventListener('keyup', function() { maskPhone(this); });
     }
 
-    // Tipo ensaio → show/hide fields
-    const tipoEl = document.getElementById('tipo_ensaio');
+    // Tipo ensaio
+    var tipoEl = document.getElementById('tipo_ensaio');
     if (tipoEl) {
-      tipoEl.addEventListener('change', function() {
-        onTipoChange(this.value);
-      });
+      tipoEl.addEventListener('change', function() { onTipoChange(this.value); });
     }
 
-    // Pagamento normal radios (à vista / parcelado)
-    document.querySelectorAll('input[name="pgto_normal"]').forEach(function(radio) {
-      radio.addEventListener('change', function() {
-        togglePgtoNormal(this.value);
-      });
-      // Also handle click for iOS
-      radio.addEventListener('click', function() {
-        togglePgtoNormal(this.value);
-      });
-    });
+    // Pagamento normal
+    var pgtoNormals = document.querySelectorAll('input[name="pgto_normal"]');
+    for (var i=0; i<pgtoNormals.length; i++) {
+      pgtoNormals[i].addEventListener('change', function() { togglePgtoNormal(this.value); });
+      pgtoNormals[i].addEventListener('click',  function() { togglePgtoNormal(this.value); });
+    }
 
-    // Payment parto forma radios → show banco details
+    // Pagamento parto - dados bancários
     document.addEventListener('change', function(e) {
       if (e.target && e.target.name === 'forma_pgto') {
-        const banco = document.getElementById('pgto_banco');
+        var banco = document.getElementById('pgto_banco');
         if (banco) banco.style.display = (e.target.value === 'Transferência Bancária' || e.target.value === 'PIX') ? 'block' : 'none';
       }
     });
-    // Also on click for iOS
-    document.addEventListener('click', function(e) {
-      if (e.target && e.target.name === 'forma_pgto') {
-        const banco = document.getElementById('pgto_banco');
-        if (banco) banco.style.display = (e.target.value === 'Transferência Bancária' || e.target.value === 'PIX') ? 'block' : 'none';
-      }
-    });
+  }
 
-  }); // end DOMContentLoaded
+  // Chamar imediatamente (script está no final do body, DOM já está pronto)
+  initEvents();
+
+
 
   function goBack() {
     document.getElementById('cardContract').classList.remove('active');
@@ -1420,4 +1400,15 @@
 
   function setStep(n) {
     for(let i = 1; i <= 3; i++) {
-      const s = document.getElementById(
+      const s = document.getElementById('step'+i);
+      const sn = document.getElementById('sn'+i);
+      s.classList.remove('active','done');
+      if(i < n)      { s.classList.add('done');   sn.textContent = '✓'; }
+      else if(i===n) { s.classList.add('active');  sn.textContent = i;  }
+      else           {                             sn.textContent = i;  }
+    }
+  }
+
+</script>
+</body>
+</html>
