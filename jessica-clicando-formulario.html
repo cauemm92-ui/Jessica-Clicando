@@ -575,14 +575,10 @@
           <input type="date" id="data_prevista">
         </div>
       </div>
-      <div class="field-row">
+      <div class="field-row full">
         <div class="field">
           <label>Data do ensaio <span>*</span></label>
           <input type="date" id="data_ensaio">
-        </div>
-        <div class="field" id="row_horario">
-          <label>Horário</label>
-          <input type="time" id="horario">
         </div>
       </div>
 
@@ -913,78 +909,49 @@
   }
 
   function goToContract() {
-    try {
-    // Manual validation
-    const nomeEl   = document.getElementById('nome_mae');
-    const tipoEl   = document.getElementById('tipo_ensaio');
-    const dataEEl  = document.getElementById('data_ensaio');
-    const assinEl  = document.getElementById('assinatura');
-    const autR     = document.querySelector('input[name="aut_img"]:checked');
-
-    if(!nomeEl || !nomeEl.value.trim())  { if(nomeEl){nomeEl.focus(); nomeEl.style.borderColor='#e05b5b'; setTimeout(function(){nomeEl.style.borderColor='';},2000);} return; }
-    if(!tipoEl || !tipoEl.value)         { if(tipoEl){tipoEl.focus(); tipoEl.style.borderColor='#e05b5b'; setTimeout(function(){tipoEl.style.borderColor='';},2000);} return; }
-    if(!dataEEl || !dataEEl.value)       { if(dataEEl){dataEEl.focus(); dataEEl.style.borderColor='#e05b5b'; setTimeout(function(){dataEEl.style.borderColor='';},2000);} return; }
-    if(!assinEl || !assinEl.value.trim()){ if(assinEl){assinEl.focus(); assinEl.style.borderColor='#e05b5b'; setTimeout(function(){assinEl.style.borderColor='';},2000);} return; }
-    if(!autR)                            { alert('Por favor, informe a autorização de uso de imagem.'); return; }
-
-    const mae      = nomeEl.value;
-    const crianca  = document.getElementById('nome_crianca').value;
-    const cpf      = document.getElementById('cpf').value;
-    const tipo     = tipoEl.value;
-    const dataE    = dataEEl.value;
-    const pacote   = document.getElementById('pacote').value;
-    const localD   = document.getElementById('local_data').value;
-    const assin    = assinEl.value;
-    const aut      = autR.value;
-
-    const isParto2 = tipo === 'Parto';
-    document.getElementById('c_mae').textContent        = mae || '—';
-    document.getElementById('c_crianca').textContent    = crianca || '—';
-    document.getElementById('c_cpf').textContent        = cpf || '—';
-    document.getElementById('c_tel').textContent        = document.getElementById('telefone').value || '—';
-    document.getElementById('c_instagram').textContent  = document.getElementById('instagram').value || '—';
-    const endVal = [document.getElementById('endereco').value, document.getElementById('bairro').value].filter(Boolean).join(', ');
-    document.getElementById('c_end').textContent        = endVal || '—';
-    document.getElementById('c_tipo').textContent       = tipo || '—';
-    document.getElementById('c_data').textContent       = fmtDate(dataE);
-    document.getElementById('c_horario').textContent    = document.getElementById('horario').value || '—';
-    document.getElementById('c_pacote').textContent     = document.getElementById('pacote') ? (document.getElementById('pacote').value || '—') : '—';
-    document.getElementById('c_qtd').textContent        = document.getElementById('qtd_fotos') ? (document.getElementById('qtd_fotos').value || '—') : '—';
-    const albumRc = document.querySelector('input[name="album"]:checked');
-    document.getElementById('c_album').textContent      = albumRc ? albumRc.value : '—';
-    document.getElementById('c_autorizacao').textContent= aut;
-    document.getElementById('c_local_data').textContent = localD || '—';
-    // Show/hide parto-only rows
-    const partoOnlyRows = ['row_c_instagram','row_c_end','row_c_horario','row_c_pacote','row_c_qtd','row_c_album'];
-    partoOnlyRows.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = isParto2 ? 'none' : 'flex';
-    });
-    document.getElementById('sig_preview').textContent = assin;
-    document.getElementById('contractDate').textContent =
-      'Gerado em ' + new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'});
-
-    // Show correct contract based on type
-    const isParto = tipo === 'Parto';
+    var nomeEl  = document.getElementById('nome_mae');
+    var tipoEl  = document.getElementById('tipo_ensaio');
+    var dataEEl = document.getElementById('data_ensaio');
+    var assinEl = document.getElementById('assinatura');
+    var autR    = document.querySelector('input[name="aut_img"]:checked');
+    if (!nomeEl.value.trim()) { nomeEl.style.borderColor='#e05b5b'; nomeEl.focus(); setTimeout(function(){nomeEl.style.borderColor='';},2000); return; }
+    if (!tipoEl.value)        { tipoEl.style.borderColor='#e05b5b'; setTimeout(function(){tipoEl.style.borderColor='';},2000); return; }
+    if (!dataEEl.value)       { dataEEl.style.borderColor='#e05b5b'; dataEEl.focus(); setTimeout(function(){dataEEl.style.borderColor='';},2000); return; }
+    if (!assinEl.value.trim()){ assinEl.style.borderColor='#e05b5b'; assinEl.focus(); setTimeout(function(){assinEl.style.borderColor='';},2000); return; }
+    if (!autR) { alert('Por favor, informe a autorizacao de uso de imagem.'); return; }
+    var mae = nomeEl.value; var crianca = document.getElementById('nome_crianca').value;
+    var cpf = document.getElementById('cpf').value; var tipo = tipoEl.value;
+    var dataE = dataEEl.value; var pacoteEl = document.getElementById('pacote');
+    var pacote = pacoteEl ? pacoteEl.value : ''; var localD = document.getElementById('local_data').value;
+    var assin = assinEl.value; var aut = autR.value; var isParto = (tipo === 'Parto');
+    document.getElementById('c_mae').textContent       = mae || '\u2014';
+    document.getElementById('c_crianca').textContent   = crianca || '\u2014';
+    document.getElementById('c_cpf').textContent       = cpf || '\u2014';
+    document.getElementById('c_tel').textContent       = document.getElementById('telefone').value || '\u2014';
+    document.getElementById('c_instagram').textContent = document.getElementById('instagram').value || '\u2014';
+    var endArr = []; var eEl=document.getElementById('endereco'); if(eEl&&eEl.value) endArr.push(eEl.value);
+    var bEl=document.getElementById('bairro'); if(bEl&&bEl.value) endArr.push(bEl.value);
+    document.getElementById('c_end').textContent    = endArr.join(', ') || '\u2014';
+    document.getElementById('c_tipo').textContent   = tipo || '\u2014';
+    document.getElementById('c_data').textContent   = fmtDate(dataE);
+    document.getElementById('c_pacote').textContent = pacote || '\u2014';
+    var qtdEl = document.getElementById('qtd_fotos');
+    document.getElementById('c_qtd').textContent    = (qtdEl&&qtdEl.value) ? qtdEl.value : '\u2014';
+    document.getElementById('c_autorizacao').textContent = aut;
+    document.getElementById('c_local_data').textContent  = localD || '\u2014';
+    var xRows = ['row_c_instagram','row_c_end','row_c_horario','row_c_pacote','row_c_qtd','row_c_album'];
+    for (var ri=0; ri<xRows.length; ri++) { var re=document.getElementById(xRows[ri]); if(re) re.style.display=isParto?'none':'flex'; }
+    var sigP=document.getElementById('sig_preview'); var sigC=document.getElementById('sig_preview_contract');
+    if(sigP) sigP.textContent=assin; if(sigC) sigC.textContent=assin||'\u2014';
+    document.getElementById('contractDate').textContent='Gerado em '+new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
     document.getElementById('clausulas_parto').style.display  = isParto ? 'block' : 'none';
     document.getElementById('clausulas_normal').style.display = isParto ? 'none'  : 'block';
-
-    // Update contract title
-    const contractTitle = document.querySelector('.contract-title');
-    if (isParto) {
-      contractTitle.textContent = 'Contrato de Fotografia de Nascimentos';
-    } else {
-      contractTitle.textContent = 'Contrato de Prestação de Serviços Fotográficos';
-    }
-
+    var ctEl=document.querySelector('.contract-title');
+    if(ctEl) ctEl.textContent=isParto?'Contrato de Fotografia de Nascimentos':'Contrato de Prestação de Serviços Fotográficos';
     setStep(2);
     document.getElementById('cardForm').classList.remove('active');
     document.getElementById('cardContract').classList.add('active');
-    window.scrollTo({top:0, behavior:'smooth'});
-    } catch(err) {
-      console.error('goToContract error:', err);
-      alert('Erro ao avançar: ' + err.message);
-    }
+    window.scrollTo({top:0,behavior:'smooth'});
   }
 
   function togglePgtoNormal(val) {
@@ -993,11 +960,9 @@
   }
 
   function onTipoChange(val) {
-    const isParto = val === 'Parto';
-    const rowPacote  = document.getElementById('row_pacote');
-    const rowHorario = document.getElementById('row_horario');
-    if (rowPacote)  rowPacote.style.display  = isParto ? 'none' : 'flex';
-    if (rowHorario) rowHorario.style.display = isParto ? 'none' : 'flex';
+    var isParto = (val === 'Parto');
+    var rp = document.getElementById('row_pacote');
+    if (rp) rp.style.display = isParto ? 'none' : 'flex';
   }
 
   // ── ALL EVENT LISTENERS — iOS/mobile safe ──
@@ -1112,13 +1077,12 @@
     const aut      = autR ? autR.value : '—';
     const dataP    = document.getElementById('data_prevista').value;
     const obs      = document.getElementById('observacoes').value;
-    const horario  = document.getElementById('horario').value || '—';
+    var horario = '—';
     const qtdFotos = document.getElementById('qtd_fotos') ? document.getElementById('qtd_fotos').value : '';
     const instagram= document.getElementById('instagram').value;
     const endereco = document.getElementById('endereco').value;
     const bairro   = document.getElementById('bairro').value;
-    const albumR   = document.querySelector('input[name="album"]:checked');
-    const album    = albumR ? albumR.value : 'Não';
+    var album = 'Não';
     const albumObs = '';
 
     // Salva para o PDF
