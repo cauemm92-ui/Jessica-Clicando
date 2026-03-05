@@ -1134,26 +1134,39 @@
       data_geracao:   dadosContrato.dataGeracao,
     };
 
-    if (typeof emailjs !== 'undefined') emailjs.send('service_69z75qc', 'template_6qslmzn', templateParams)
-      .then(function() {
-        console.log('E-mail enviado com sucesso!');
-        const emailStatus = document.getElementById('email_status');
-        if (emailStatus) {
-          emailStatus.innerHTML = '✓ E-mail enviado para a Jessica';
-          emailStatus.style.color = 'var(--beige)';
-        }
-      })
-      .catch(function(err) {
-        console.error('Erro ao enviar e-mail:', err);
-        const emailStatus = document.getElementById('email_status');
-        if (emailStatus) {
-          emailStatus.innerHTML = '⚠ Não foi possível enviar o e-mail automático';
-          emailStatus.style.color = '#c0392b';
-        }
-      });
+        if (typeof emailjs !== 'undefined') {
+      var emailStatus = document.getElementById('email_status');
+      if (emailStatus) emailStatus.innerHTML = '📨 Enviando…';
+      emailjs.send('service_69z75qc', 'template_6qslmzn', templateParams)
+        .then(function() {
+          if (emailStatus) {
+            emailStatus.innerHTML = '✓ E-mail enviado para a Jessica';
+            emailStatus.style.color = 'var(--beige)';
+          }
+        })
+        .catch(function(err) {
+          console.error('Erro:', err);
+          if (emailStatus) {
+            emailStatus.innerHTML = '⚠ Não foi possível enviar o e-mail automático';
+            emailStatus.style.color = '#c0392b';
+          }
+        });
+    }
+  }
+
+  function gerarPDFBase64() {
+    var pdfData = gerarDocPDF();
+    var nome = 'Contrato_JessicaClicando_' + (dadosContrato.mae || 'cliente').replace(/\s+/g, '_') + '.pdf';
+    return { base64: pdfData.output('datauristring').split(',')[1], nome: nome };
   }
 
   function downloadPDF() {
+    var pdfData = gerarDocPDF();
+    var nome = 'Contrato_JessicaClicando_' + (dadosContrato.mae || 'cliente').replace(/\s+/g, '_') + '.pdf';
+    pdfData.save(nome);
+  }
+
+  function gerarDocPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
     const d = dadosContrato;
@@ -1393,9 +1406,7 @@
       doc.text('Página ' + i + ' de ' + pages, pw - margin, 290, { align: 'right' });
     }
 
-    // ── SAVE ──
-    const filename = 'Contrato_JessicaClicando_' + (d.mae || 'cliente').replace(/\s+/g, '_') + '.pdf';
-    doc.save(filename);
+    return doc;
   }
 
   function setStep(n) {
