@@ -564,18 +564,16 @@
           <label>Tipo de ensaio <span>*</span></label>
           <select id="tipo_ensaio" onchange="onTipoChange(this.value)">
             <option value="">Selecione…</option>
-            <option>Newborn</option>
-            <option>Gestante</option>
+            <option>Ensaio</option>
             <option>Parto</option>
-            <option>Família</option>
           </select>
         </div>
-        <div class="field">
+        <div class="field" id="row_data_prevista" style="display:none;">
           <label>Data prevista (parto/nascimento)</label>
           <input type="date" id="data_prevista">
         </div>
       </div>
-      <div class="field-row full">
+      <div class="field-row full" id="row_data_ensaio">
         <div class="field">
           <label>Data do ensaio <span>*</span></label>
           <input type="date" id="data_ensaio">
@@ -710,7 +708,7 @@
           </div>
           <div class="field" style="flex:1">
             <label>Reserva (R$)</label>
-            <input type="text" id="reserva_parto" placeholder="Ex: R$ 875,00">
+            <input type="text" id="reserva_parto" value="R$ 100,00" readonly style="background:var(--bg2);color:var(--gray);">
           </div>
         </div>
         <div style="font-size:0.7rem;font-weight:600;color:var(--dark2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Forma de Pagamento</div>
@@ -800,9 +798,7 @@
             <label class="pgto-opt"><input type="radio" name="pgto_forma_normal" value="Débito">
               <div class="pgto-card"><div class="pgto-icon">◈</div><div class="pgto-name">Débito</div><div class="pgto-key">Via maquininha</div></div>
             </label>
-            <label class="pgto-opt"><input type="radio" name="pgto_forma_normal" value="Dinheiro">
-              <div class="pgto-card"><div class="pgto-icon">◎</div><div class="pgto-name">Dinheiro</div><div class="pgto-key">Presencialmente</div></div>
-            </label>
+
           </div>
           <div style="display:flex;gap:10px;margin-top:10px;">
             <div class="field" style="flex:1">
@@ -811,7 +807,7 @@
             </div>
             <div class="field" style="flex:1">
               <label>Reserva (R$)</label>
-              <input type="text" id="reserva_avista" placeholder="Ex: R$ 200,00">
+              <input type="text" id="reserva_avista" value="R$ 100,00" readonly style="background:var(--bg2);color:var(--gray);">
             </div>
           </div>
         </div>
@@ -823,9 +819,7 @@
             <label class="pgto-opt"><input type="radio" name="pgto_forma_normal" value="Crédito Parcelado">
               <div class="pgto-card"><div class="pgto-icon">◇</div><div class="pgto-name">Crédito</div><div class="pgto-key">Via maquininha</div></div>
             </label>
-            <label class="pgto-opt"><input type="radio" name="pgto_forma_normal" value="PIX Parcelado">
-              <div class="pgto-card"><div class="pgto-icon">◈</div><div class="pgto-name">PIX Parcelado</div><div class="pgto-key">Combinado</div></div>
-            </label>
+
           </div>
           <div style="display:flex;gap:10px;margin-top:10px;">
             <div class="field" style="flex:1">
@@ -838,7 +832,7 @@
             </div>
             <div class="field" style="flex:1">
               <label>Reserva (R$)</label>
-              <input type="text" id="reserva_parcelado" placeholder="Ex: R$ 200,00">
+              <input type="text" id="reserva_parcelado" value="R$ 100,00" readonly style="background:var(--bg2);color:var(--gray);">
             </div>
           </div>
         </div>
@@ -973,8 +967,12 @@
 
   function onTipoChange(val) {
     var isParto = (val === 'Parto');
-    var rp = document.getElementById('row_pacote');
-    if (rp) rp.style.display = isParto ? 'none' : 'flex';
+    var rp  = document.getElementById('row_pacote');
+    var rdp = document.getElementById('row_data_prevista');
+    var rde = document.getElementById('row_data_ensaio');
+    if (rp)  rp.style.display  = isParto ? 'none' : 'flex';
+    if (rdp) rdp.style.display = isParto ? 'flex' : 'none';
+    if (rde) rde.style.display = isParto ? 'none' : 'flex';
   }
 
   // ── EVENT LISTENERS (inline, sem DOMContentLoaded) ──
