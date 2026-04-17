@@ -251,6 +251,8 @@
     margin-bottom: 10px;
     padding-bottom: 8px;
   }
+  #sig_pad_wrap { cursor: crosshair; }
+  #sig_canvas { display: block; width: 100%; }
   .sig-hint { font-size: 0.62rem; color: var(--gray); letter-spacing: 0.1em; text-transform: uppercase; }
 
   /* ── AUTH TEXT ── */
@@ -623,9 +625,14 @@
         <div class="sig-hint">Pré-visualização</div>
       </div>
       <div class="field-row" style="margin-top:14px">
-        <div class="field">
-          <label>Assinar com seu nome <span>*</span></label>
-          <input type="text" id="assinatura" placeholder="Digite seu nome completo" autocomplete="name" oninput="atualizarAssinatura(this.value)" onkeyup="atualizarAssinatura(this.value)" onchange="atualizarAssinatura(this.value)">
+        <div class="field" style="flex:2">
+          <label>Assinatura <span>*</span></label>
+          <div id="sig_pad_wrap" style="border:1px solid var(--border);border-radius:4px;background:#faf8f5;position:relative;overflow:hidden;">
+            <canvas id="sig_canvas" height="110" style="display:block;width:100%;touch-action:none;cursor:crosshair;"></canvas>
+            <div id="sig_placeholder" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Dancing Script',cursive;font-size:1.2rem;color:var(--gray-light);pointer-events:none;white-space:nowrap;">Assine aqui ✏️</div>
+            <button type="button" onclick="limparAssinatura()" style="position:absolute;top:6px;right:8px;background:none;border:none;font-size:0.7rem;color:var(--gray);cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:.05em;">Limpar</button>
+          </div>
+          <input type="hidden" id="assinatura" value="">
         </div>
         <div class="field">
           <label>Local e data</label>
@@ -888,6 +895,85 @@
     if (p2) p2.textContent = val || '—';
   }
 
+  // ── CANVAS SIGNATURE ──
+  var sigCanvas, sigCtx, sigDrawing = false, sigHasData = false;
+
+  function initCanvas() {
+    sigCanvas = document.getElementById('sig_canvas');
+    if (!sigCanvas) return;
+    sigCtx = sigCanvas.getContext('2d');
+
+    // Resize canvas to actual pixel size
+    function resizeCanvas() {
+      var rect = sigCanvas.getBoundingClientRect();
+      sigCanvas.width  = rect.width  * (window.devicePixelRatio || 1);
+      sigCanvas.height = sigCanvas.height * (window.devicePixelRatio || 1);
+      sigCtx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+      sigCtx.strokeStyle = '#1a1a1a';
+      sigCtx.lineWidth   = 2.2;
+      sigCtx.lineCap     = 'round';
+      sigCtx.lineJoin    = 'round';
+    }
+    resizeCanvas();
+
+    function getPos(e) {
+      var rect = sigCanvas.getBoundingClientRect();
+      var src  = e.touches ? e.touches[0] : e;
+      return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+    }
+
+    function startDraw(e) {
+      e.preventDefault();
+      sigDrawing = true;
+      var pos = getPos(e);
+      sigCtx.beginPath();
+      sigCtx.moveTo(pos.x, pos.y);
+      var ph = document.getElementById('sig_placeholder');
+      if (ph) ph.style.display = 'none';
+    }
+
+    function draw(e) {
+      if (!sigDrawing) return;
+      e.preventDefault();
+      var pos = getPos(e);
+      sigCtx.lineTo(pos.x, pos.y);
+      sigCtx.stroke();
+      sigHasData = true;
+      // Save to hidden input as dataURL
+      var dataURL = sigCanvas.toDataURL('image/png');
+      var inp = document.getElementById('assinatura');
+      if (inp) inp.value = dataURL;
+      // Update contract preview
+      var p2 = document.getElementById('sig_preview_contract');
+      if (p2) p2.innerHTML = '<img src="' + dataURL + '" style="max-height:50px;max-width:180px;">';
+    }
+
+    function endDraw(e) {
+      sigDrawing = false;
+      sigCtx.beginPath();
+    }
+
+    sigCanvas.addEventListener('mousedown',  startDraw, { passive: false });
+    sigCanvas.addEventListener('mousemove',  draw,      { passive: false });
+    sigCanvas.addEventListener('mouseup',    endDraw);
+    sigCanvas.addEventListener('mouseleave', endDraw);
+    sigCanvas.addEventListener('touchstart', startDraw, { passive: false });
+    sigCanvas.addEventListener('touchmove',  draw,      { passive: false });
+    sigCanvas.addEventListener('touchend',   endDraw);
+  }
+
+  function limparAssinatura() {
+    if (!sigCanvas) return;
+    sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+    sigHasData = false;
+    var inp = document.getElementById('assinatura');
+    if (inp) inp.value = '';
+    var ph = document.getElementById('sig_placeholder');
+    if (ph) ph.style.display = 'block';
+    var p2 = document.getElementById('sig_preview_contract');
+    if (p2) p2.textContent = '—';
+  }
+
   function atualizarNome(val) {
     var el = document.getElementById('aut_nome_live');
     if (el) el.textContent = val || '___________________________';
@@ -918,12 +1004,11 @@
     var nomeEl  = document.getElementById('nome_mae');
     var tipoEl  = document.getElementById('tipo_ensaio');
     var dataEEl = document.getElementById('data_ensaio');
-    var assinEl = document.getElementById('assinatura');
     var autR    = document.querySelector('input[name="aut_img"]:checked');
     if (!nomeEl.value.trim()) { nomeEl.style.borderColor='#e05b5b'; nomeEl.focus(); setTimeout(function(){nomeEl.style.borderColor='';},2000); return; }
     if (!tipoEl.value)        { tipoEl.style.borderColor='#e05b5b'; setTimeout(function(){tipoEl.style.borderColor='';},2000); return; }
     if (!dataEEl.value)       { dataEEl.style.borderColor='#e05b5b'; dataEEl.focus(); setTimeout(function(){dataEEl.style.borderColor='';},2000); return; }
-    if (!assinEl.value.trim()){ assinEl.style.borderColor='#e05b5b'; assinEl.focus(); setTimeout(function(){assinEl.style.borderColor='';},2000); return; }
+    if (!sigHasData) { var sw=document.getElementById('sig_pad_wrap'); if(sw){sw.style.borderColor='#e05b5b';setTimeout(function(){sw.style.borderColor='';},2000);} return; }
     if (!autR) { alert('Por favor, informe a autorizacao de uso de imagem.'); return; }
     var mae = nomeEl.value; var crianca = document.getElementById('nome_crianca').value;
     var cpf = document.getElementById('cpf').value; var tipo = tipoEl.value;
@@ -981,6 +1066,7 @@
     if (typeof emailjs !== 'undefined') {
       emailjs.init('wwgGzvP9daTezj3cH');
     }
+    initCanvas();
     document.addEventListener('change', function(e) {
       if (e.target && e.target.name === 'forma_pgto') {
         var banco = document.getElementById('pgto_banco');
@@ -1022,7 +1108,7 @@
     var pacote   = document.getElementById('pacote') ? document.getElementById('pacote').value : '';
     var email    = document.getElementById('email').value;
     var telefone = document.getElementById('telefone').value;
-    var assin    = document.getElementById('assinatura').value;
+    var assin    = sigCanvas ? sigCanvas.toDataURL('image/png') : '';
     var localD   = document.getElementById('local_data').value;
     var autR     = document.querySelector('input[name="aut_img"]:checked');
     var aut      = autR ? autR.value : '—';
@@ -1098,7 +1184,7 @@
       reserva:        dadosContrato.reservaFinal || '—',
       forma_pgto:     dadosContrato.pgtoInfo || '—',
       autorizacao:    dadosContrato.aut,
-      assinatura:     dadosContrato.assin,
+      assinatura:     '[Assinatura digital registrada]',
       local_data:     dadosContrato.localD || '—',
       observacoes:    dadosContrato.obs || '—',
       data_geracao:   dadosContrato.dataGeracao,
@@ -1365,10 +1451,12 @@
     y += 6;
 
     // assinatura cursiva
-    doc.setFontSize(18);
-    doc.setFont('times', 'bolditalic');
-    doc.setTextColor(26,26,26);
-    doc.text(d.assin || '—', margin, y + 8);
+    if (d.assin && d.assin.indexOf('data:image') === 0) {
+      try { doc.addImage(d.assin, 'PNG', margin, y, 70, 18); } catch(e) { doc.text('—', margin, y+8); }
+    } else {
+      doc.setFontSize(18); doc.setFont('times','bolditalic'); doc.setTextColor(26,26,26);
+      doc.text(d.assin || '—', margin, y+8);
+    }
     doc.setDrawColor(200,200,200);
     doc.setLineWidth(0.3);
     doc.line(margin, y + 11, margin + 80, y + 11);
