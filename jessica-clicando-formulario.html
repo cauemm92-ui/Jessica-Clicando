@@ -620,16 +620,12 @@
 
     <div class="section">
       <div class="section-title">Assinatura Digital</div>
-      <div class="sig-wrap">
-        <div class="sig-preview" id="sig_preview">Sua assinatura</div>
-        <div class="sig-hint">Pré-visualização</div>
-      </div>
-      <div class="field-row" style="margin-top:14px">
+      <div class="field-row" style="margin-top:8px">
         <div class="field" style="flex:2">
           <label>Assinatura <span>*</span></label>
           <div id="sig_pad_wrap" style="border:1px solid var(--border);border-radius:4px;background:#faf8f5;position:relative;overflow:hidden;">
-            <canvas id="sig_canvas" height="110" style="display:block;width:100%;touch-action:none;cursor:crosshair;"></canvas>
-            <div id="sig_placeholder" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Dancing Script',cursive;font-size:1.2rem;color:var(--gray-light);pointer-events:none;white-space:nowrap;">Assine aqui ✏️</div>
+            <canvas id="sig_canvas" height="130" style="display:block;width:100%;touch-action:none;cursor:crosshair;"></canvas>
+            <div id="sig_placeholder" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Dancing Script',cursive;font-size:1.4rem;color:var(--gray-light);pointer-events:none;white-space:nowrap;">Assine aqui ✏️</div>
             <button type="button" onclick="limparAssinatura()" style="position:absolute;top:6px;right:8px;background:none;border:none;font-size:0.7rem;color:var(--gray);cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:.05em;">Limpar</button>
           </div>
           <input type="hidden" id="assinatura" value="">
@@ -889,9 +885,7 @@
   var dadosContrato = {};
 
   function atualizarAssinatura(val) {
-    var p1 = document.getElementById('sig_preview');
     var p2 = document.getElementById('sig_preview_contract');
-    if (p1) p1.textContent = val || 'Sua assinatura';
     if (p2) p2.textContent = val || '—';
   }
 
@@ -1014,7 +1008,7 @@
     var cpf = document.getElementById('cpf').value; var tipo = tipoEl.value;
     var dataE = dataEEl.value; var pacoteEl = document.getElementById('pacote');
     var pacote = pacoteEl ? pacoteEl.value : ''; var localD = document.getElementById('local_data').value;
-    var assin = assinEl.value; var aut = autR.value; var isParto = (tipo === 'Parto');
+    var assin = sigCanvas ? sigCanvas.toDataURL('image/png') : ''; var aut = autR.value; var isParto = (tipo === 'Parto');
     document.getElementById('c_mae').textContent       = mae || '\u2014';
     document.getElementById('c_crianca').textContent   = crianca || '\u2014';
     document.getElementById('c_cpf').textContent       = cpf || '\u2014';
@@ -1032,8 +1026,9 @@
     document.getElementById('c_local_data').textContent  = localD || '\u2014';
     var xRows = ['row_c_instagram','row_c_end','row_c_horario','row_c_pacote','row_c_qtd','row_c_album'];
     for (var ri=0; ri<xRows.length; ri++) { var re=document.getElementById(xRows[ri]); if(re) re.style.display=isParto?'none':'flex'; }
-    var sigP=document.getElementById('sig_preview'); var sigC=document.getElementById('sig_preview_contract');
-    if(sigP) sigP.textContent=assin; if(sigC) sigC.textContent=assin||'\u2014';
+     var sigC=document.getElementById('sig_preview_contract');
+    if(sigP) { sigP.innerHTML = assin ? '<img src="'+assin+'" style="max-height:52px;">' : 'Sua assinatura'; }
+    if(sigC) { sigC.innerHTML = assin ? '<img src="'+assin+'" style="max-height:50px;max-width:180px;">' : '\u2014'; }
     document.getElementById('contractDate').textContent='Gerado em '+new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
     document.getElementById('clausulas_parto').style.display  = isParto ? 'block' : 'none';
     document.getElementById('clausulas_normal').style.display = isParto ? 'none'  : 'block';
