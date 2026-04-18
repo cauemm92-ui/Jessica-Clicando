@@ -1009,6 +1009,7 @@
     var mae = nomeEl.value; var crianca = document.getElementById('nome_crianca').value;
     var cpf = document.getElementById('cpf').value; var tipo = tipoEl.value;
     var dataE = (dataEEl && dataEEl.value) ? dataEEl.value : (dataPEl ? dataPEl.value : '');
+    var pacoteEl = document.getElementById('pacote');
     var pacote = pacoteEl ? pacoteEl.value : ''; var localD = document.getElementById('local_data').value;
     var assin = sigCanvas ? sigCanvas.toDataURL('image/png') : ''; var aut = autR.value; var isParto = (tipo === 'Parto');
     document.getElementById('c_mae').textContent       = mae || '\u2014';
@@ -1100,7 +1101,9 @@
     var crianca  = document.getElementById('nome_crianca').value;
     var cpf      = document.getElementById('cpf').value;
     var tipo     = document.getElementById('tipo_ensaio').value;
-    var dataE    = document.getElementById('data_ensaio').value;
+    var _deEl = document.getElementById('data_ensaio');
+    var _dpEl = document.getElementById('data_prevista');
+    var dataE = (_deEl && _deEl.value) ? _deEl.value : (_dpEl ? _dpEl.value : '');
     var pacote   = document.getElementById('pacote') ? document.getElementById('pacote').value : '';
     var email    = document.getElementById('email').value;
     var telefone = document.getElementById('telefone').value;
@@ -1146,8 +1149,16 @@
       }
     }
 
-    dadosContrato = { mae, crianca, cpf, tipo, dataE: fmtDate(dataE), pacote, email, telefone, assin, localD, aut, dataP: fmtDate(dataP), obs, pgtoInfo, isParto, horario, qtdFotos, instagram, endereco, bairro, album, albumObs, valorFinal, reservaFinal,
-      dataGeracao: new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'}) };
+    dadosContrato = {
+      mae: mae, crianca: crianca, cpf: cpf, tipo: tipo,
+      dataE: fmtDate(dataE), pacote: pacote, email: email, telefone: telefone,
+      assin: assin, localD: localD, aut: aut, dataP: fmtDate(dataP),
+      obs: obs, pgtoInfo: pgtoInfo, isParto: isParto, horario: horario,
+      qtdFotos: qtdFotos, instagram: instagram, endereco: endereco,
+      bairro: bairro, album: album, albumObs: albumObs,
+      valorFinal: valorFinal, reservaFinal: reservaFinal,
+      dataGeracao: new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'})
+    };
 
     var sd = '';
     sd += '<div class="success-detail-row"><span>Cliente</span><span>' + mae + '</span></div>';
@@ -1155,7 +1166,7 @@
     sd += '<div class="success-detail-row"><span>Data</span><span>' + fmtDate(dataE) + '</span></div>';
     if (pacote) sd += '<div class="success-detail-row"><span>Pacote</span><span>' + pacote + '</span></div>';
     if (email)  sd += '<div class="success-detail-row"><span>E-mail</span><span>' + email + '</span></div>';
-    sd += '<div class="success-detail-row"><span>Assinatura</span><span style="font-family:\'Dancing Script\',cursive;font-size:1.1rem;color:var(--accent-light);">' + assin + '</span></div>';
+    sd += '<div class="success-detail-row"><span>Assinatura</span><span>' + (assin && assin.indexOf('data:') === 0 ? '<img src="'+assin+'" style="max-height:36px;">' : '—') + '</span></div>';
     if (pgtoInfo && pgtoInfo !== '—') sd += '<div class="success-detail-row"><span>Pagamento</span><span>' + pgtoInfo + '</span></div>';
     sd += '<div class="success-detail-row"><span>Contrato</span><span style="color:var(--beige);font-weight:500;">✓ Aceito digitalmente</span></div>';
     document.getElementById('successDetail').innerHTML = sd;
