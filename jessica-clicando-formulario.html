@@ -998,15 +998,17 @@
     var nomeEl  = document.getElementById('nome_mae');
     var tipoEl  = document.getElementById('tipo_ensaio');
     var dataEEl = document.getElementById('data_ensaio');
+    var dataPEl = document.getElementById('data_prevista');
+    var dataValida = (dataEEl && dataEEl.value) || (dataPEl && dataPEl.value);
     var autR    = document.querySelector('input[name="aut_img"]:checked');
     if (!nomeEl.value.trim()) { nomeEl.style.borderColor='#e05b5b'; nomeEl.focus(); setTimeout(function(){nomeEl.style.borderColor='';},2000); return; }
     if (!tipoEl.value)        { tipoEl.style.borderColor='#e05b5b'; setTimeout(function(){tipoEl.style.borderColor='';},2000); return; }
-    if (!dataEEl.value)       { dataEEl.style.borderColor='#e05b5b'; dataEEl.focus(); setTimeout(function(){dataEEl.style.borderColor='';},2000); return; }
+    if (!dataValida) { if(dataEEl){dataEEl.style.borderColor='#e05b5b'; dataEEl.focus(); setTimeout(function(){dataEEl.style.borderColor='';},2000);} return; }
     if (!sigHasData) { var sw=document.getElementById('sig_pad_wrap'); if(sw){sw.style.borderColor='#e05b5b';setTimeout(function(){sw.style.borderColor='';},2000);} return; }
     if (!autR) { alert('Por favor, informe a autorizacao de uso de imagem.'); return; }
     var mae = nomeEl.value; var crianca = document.getElementById('nome_crianca').value;
     var cpf = document.getElementById('cpf').value; var tipo = tipoEl.value;
-    var dataE = dataEEl.value; var pacoteEl = document.getElementById('pacote');
+    var dataE = (dataEEl && dataEEl.value) ? dataEEl.value : (dataPEl ? dataPEl.value : '');
     var pacote = pacoteEl ? pacoteEl.value : ''; var localD = document.getElementById('local_data').value;
     var assin = sigCanvas ? sigCanvas.toDataURL('image/png') : ''; var aut = autR.value; var isParto = (tipo === 'Parto');
     document.getElementById('c_mae').textContent       = mae || '\u2014';
@@ -1027,7 +1029,6 @@
     var xRows = ['row_c_instagram','row_c_end','row_c_horario','row_c_pacote','row_c_qtd','row_c_album'];
     for (var ri=0; ri<xRows.length; ri++) { var re=document.getElementById(xRows[ri]); if(re) re.style.display=isParto?'none':'flex'; }
      var sigC=document.getElementById('sig_preview_contract');
-    if(sigP) { sigP.innerHTML = assin ? '<img src="'+assin+'" style="max-height:52px;">' : 'Sua assinatura'; }
     if(sigC) { sigC.innerHTML = assin ? '<img src="'+assin+'" style="max-height:50px;max-width:180px;">' : '\u2014'; }
     document.getElementById('contractDate').textContent='Gerado em '+new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
     document.getElementById('clausulas_parto').style.display  = isParto ? 'block' : 'none';
