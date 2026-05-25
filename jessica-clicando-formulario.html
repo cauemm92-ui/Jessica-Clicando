@@ -1386,7 +1386,7 @@
     window.scrollTo({top:0,behavior:'smooth'});
     sigHasData = false;
     sigCanvas = null;
-    initCanvas();
+    setTimeout(function() { initCanvas(); }, 200);
   }
 
   function togglePgtoNormal(val) {
@@ -1459,11 +1459,16 @@
   }
 
   function toggleConfirm() {
-    document.getElementById('confirmBtn').disabled = !document.getElementById('consentCheck').checked;
+    var checked = document.getElementById('consentCheck').checked;
+    var btn = document.getElementById('confirmBtn');
+    if (btn) btn.disabled = !checked;
   }
 
   function finalize() {
-    if (!sigHasData) {
+    // Verificar assinatura - sigHasData ou input hidden preenchido
+    var assinaturaInput = document.getElementById('assinatura');
+    var temAssinatura = sigHasData || (assinaturaInput && assinaturaInput.value && assinaturaInput.value.length > 100);
+    if (!temAssinatura) {
       var sw = document.getElementById('sig_pad_wrap');
       if (sw) { sw.style.borderColor='#e05b5b'; setTimeout(function(){sw.style.borderColor='';},2000); }
       alert('Por favor, assine o contrato antes de finalizar.');
