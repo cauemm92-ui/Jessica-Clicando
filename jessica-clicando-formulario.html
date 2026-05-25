@@ -616,22 +616,44 @@
       </div>
 
       <!-- Campo valor: normal mostra pacote, parto fica oculto (preenchido na hora) -->
+
+      <!-- CAMPOS ESPECÍFICOS PARTO -->
+      <div class="field-row" id="row_acompanhante" style="display:none;">
+        <div class="field" style="grid-column:1/-1;">
+          <label>Nome e grau de parentesco do acompanhante</label>
+          <input type="text" id="acompanhante" placeholder="Ex: João Silva — Pai">
+        </div>
+      </div>
+      <div class="field-row" id="row_medico_hospital" style="display:none;">
+        <div class="field">
+          <label>Médico(a)</label>
+          <input type="text" id="medico" placeholder="Nome do médico(a)">
+        </div>
+        <div class="field">
+          <label>Hospital</label>
+          <input type="text" id="hospital" placeholder="Nome do hospital">
+        </div>
+      </div>
+      <div class="field-row" id="row_via_parto" style="display:none;">
+        <div class="field">
+          <label>Via de parto pretendida</label>
+          <div class="radio-group" style="margin-top:4px;">
+            <label class="radio-opt"><input type="radio" name="via_parto" value="Cesárea"><span class="radio-dot"></span>Cesárea</label>
+            <label class="radio-opt"><input type="radio" name="via_parto" value="Normal"><span class="radio-dot"></span>Normal</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Deseja vídeo dos melhores momentos? <span style="font-weight:400;font-size:0.72rem;color:var(--gray);">(Acréscimo informado no orçamento)</span></label>
+          <div class="radio-group" style="margin-top:4px;">
+            <label class="radio-opt"><input type="radio" name="deseja_video" value="Sim"><span class="radio-dot"></span>Sim</label>
+            <label class="radio-opt"><input type="radio" name="deseja_video" value="Não" checked><span class="radio-dot"></span>Não</label>
+          </div>
+        </div>
+      </div>
+
       <div class="field-row" id="row_momento_familia" style="display:none;">
         <div class="field" style="grid-column:1/-1;">
-          <label style="display:flex;align-items:center;gap:8px;">Momento em Família
-            <span class="tooltip-wrap">
-              <span class="tooltip-icon">ℹ</span>
-              <span class="tooltip-box">
-                <strong>Fotografia de Parto — Como funciona:</strong><br><br>
-                Trata-se de uma fotografia documental. Em 90% do tempo não dirigimos as fotos, são espontâneas. Sempre que possível fazemos fotos dos detalhes — pezinhos, mãozinhas — e com a família, porém respeitamos todos os momentos e orientações da equipe de enfermagem.<br><br>
-                Se o bebê precisar ficar na UTI Neonatal, não podemos fotografá-lo por questões de segurança médica e saúde.<br><br>
-                Caso haja lembrancinhas a serem entregues a familiares, deixe tudo preparado antes do bebê nascer para que possamos registrar também.<br><br>
-                <strong>Cesárea:</strong> fotografamos após a anestesia, nascimento, primeiros cuidados no centro cirúrgico, medida, pesagem e com os pais. Não retornamos para o quarto.<br><br>
-                <strong>Parto normal:</strong> a partir de 6–7 cm de dilatação, nascimento e primeiros cuidados. Cada parto é único e cada equipe médica trabalha de uma maneira — não podemos interferir.<br><br>
-                As fotos são em sua maioria espontâneas. O momento do nascimento é único e inesquecível. Fotografamos com discrição e carinho para que você e sua família possam se lembrar desse dia tão especial. 🤍
-              </span>
-            </span>
-          </label>
+          <label>Momento em Família <span style="font-weight:400;font-size:0.75rem;color:var(--gray);">(Verificar acréscimos e disponibilidade)</span></label>
           <div style="background:var(--beige-pale);border:1px solid var(--beige-light);border-radius:4px;padding:14px 16px;margin-bottom:8px;font-size:0.78rem;color:var(--dark2);line-height:1.6;">
             O momento em família geralmente ocorre no dia seguinte ao nascimento ou próximo à saída da maternidade. O tempo é de 50min a 1h no quarto, e deve ser combinado assim que o bebê nascer ou até 1 dia antes do parto.
           </div>
@@ -866,6 +888,19 @@
         <div class="clause-num">Cláusula 4</div>
         <div class="clause-title">Entrega e Direitos de Imagem</div>
         <div class="clause-text">Mínimo de 40 fotos entregues em até 30 dias via link digital. Vídeo melhores momentos (formato vertical, aprox. 1 min) em até 45 dias. Álbum/Quadro em até 45 dias úteis após escolha. Prazo de reposição em caso de perda: 60 dias. As fotografias são de autoria de Jessica Clicando Fotografia.</div>
+      </div>
+
+      <div class="clause" style="margin-top:8px;">
+        <div class="clause-num" style="background:var(--beige);color:var(--white);">Fotografia de Parto — Como Funciona</div>
+        <div class="clause-title">Informações Importantes</div>
+        <div class="clause-text">
+          Trata-se de uma fotografia documental. Em 90% do tempo não dirigimos as fotos, são espontâneas. Sempre que possível fazemos fotos dos detalhes — pezinhos, mãozinhas — e com a família, porém tratando-se de um centro médico, respeitamos todos os momentos e orientações da equipe de enfermagem.<br><br>
+          Se o bebê precisar ficar na UTI Neonatal, não podemos fotografá-lo por questões de segurança médica e saúde.<br><br>
+          Caso haja lembrancinhas a serem entregues a familiares, deixe tudo preparado antes do bebê nascer (se houver tempo hábil) para que possamos registrar também.<br><br>
+          <strong>Cesárea:</strong> o período fotografado é após a anestesia, nascimento do bebê, primeiros cuidados no centro cirúrgico, medida, pesagem e com os pais. Não retornamos para o quarto.<br><br>
+          <strong>Parto normal:</strong> a partir de 6–7 cm de dilatação, nascimento e primeiros cuidados como medida, peso e com os pais. Cada parto é único e cada equipe médica trabalha de uma maneira — não podemos interferir.<br><br>
+          As fotos são em sua maioria espontâneas, de acordo com os acontecimentos. O momento do nascimento é único e inesquecível. Fotografamos com discrição e carinho para que você e sua família possam se lembrar desse dia tão especial. 🤍
+        </div>
       </div>
 
       <div class="clause" style="margin-top:8px;">
@@ -1155,6 +1190,14 @@
     var mfR = document.querySelector('input[name="momento_familia"]:checked');
     var momentoFamilia = mfR ? mfR.value : 'Nao';
     if (!isParto) momentoFamilia = 'N/A';
+    var acomp   = document.getElementById('acompanhante') ? document.getElementById('acompanhante').value : '';
+    var medico  = document.getElementById('medico')  ? document.getElementById('medico').value  : '';
+    var hospital = document.getElementById('hospital') ? document.getElementById('hospital').value : '';
+    var vpR     = document.querySelector('input[name="via_parto"]:checked');
+    var viaParto = vpR ? vpR.value : '';
+    var dvR     = document.querySelector('input[name="deseja_video"]:checked');
+    var desejaVideo = dvR ? dvR.value : 'Nao';
+    if (!isParto) { acomp = ''; medico = ''; hospital = ''; viaParto = ''; desejaVideo = 'N/A'; }
     var obs       = document.getElementById('observacoes') ? document.getElementById('observacoes').value : '';
     var album     = 'Nao';
     var albumObs  = '';
@@ -1365,6 +1408,12 @@
     if (pn)  pn.style.display  = isParto ? 'none' : 'block';
     var rmf = document.getElementById('row_momento_familia');
     if (rmf) rmf.style.display = isParto ? 'grid' : 'none';
+    var racomp = document.getElementById('row_acompanhante');
+    var rmh    = document.getElementById('row_medico_hospital');
+    var rvp    = document.getElementById('row_via_parto');
+    if (racomp) racomp.style.display = isParto ? 'grid' : 'none';
+    if (rmh)    rmh.style.display    = isParto ? 'grid' : 'none';
+    if (rvp)    rvp.style.display    = isParto ? 'grid' : 'none';
   }
 
   // ── EVENT LISTENERS (inline, sem DOMContentLoaded) ──
