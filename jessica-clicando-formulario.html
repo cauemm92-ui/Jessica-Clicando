@@ -1314,6 +1314,7 @@
   }
 
     function goToContract() {
+    try {
     var nomeEl  = document.getElementById('nome_mae');
     var tipoEl  = document.getElementById('tipo_ensaio');
     var dataEEl = document.getElementById('data_ensaio');
@@ -1328,7 +1329,7 @@
     var cpf = document.getElementById('cpf').value; var tipo = tipoEl.value;
     var dataE = (dataEEl && dataEEl.value) ? dataEEl.value : (dataPEl ? dataPEl.value : '');
     var pacoteEl = document.getElementById('pacote');
-    var pacote = pacoteEl ? pacoteEl.value : ''; var localD = document.getElementById('local_data').value;
+    var pacote = pacoteEl ? pacoteEl.value : '';
     var assin = sigCanvas ? sigCanvas.toDataURL('image/png') : ''; var aut = autR.value; var isParto = (tipo === 'Parto');
 
     // Captura pagamento do formulário
@@ -1387,6 +1388,7 @@
     sigHasData = false;
     sigCanvas = null;
     setTimeout(function() { initCanvas(); }, 200);
+    } catch(err) { alert("Erro: " + err.message); console.error(err); }
   }
 
   function togglePgtoNormal(val) {
@@ -1497,10 +1499,18 @@
     var bairro   = document.getElementById('bairro').value;
     var album = 'Não';
     var albumObs = '';
-
-    // Salva para o PDF
-        // Capture payment info
-    var isParto = tipo === 'Parto';
+    var isParto = (tipo === 'Parto');
+    var mfR = document.querySelector('input[name="momento_familia"]:checked');
+    var momentoFamilia = mfR ? mfR.value : 'Não';
+    if (!isParto) momentoFamilia = 'N/A';
+    var acomp = document.getElementById('acompanhante') ? document.getElementById('acompanhante').value : '';
+    var medico = document.getElementById('medico') ? document.getElementById('medico').value : '';
+    var hospital = document.getElementById('hospital') ? document.getElementById('hospital').value : '';
+    var vpR = document.querySelector('input[name="via_parto"]:checked');
+    var viaParto = vpR ? vpR.value : '';
+    var dvR = document.querySelector('input[name="deseja_video"]:checked');
+    var desejaVideo = dvR ? dvR.value : 'Não';
+    if (!isParto) { acomp=''; medico=''; hospital=''; viaParto=''; desejaVideo='N/A'; }
     var pgtoInfo = '—';
     if (isParto) {
       var pgtoR = document.querySelector('input[name="forma_pgto"]:checked');
@@ -1531,7 +1541,9 @@
       dataE: fmtDate(dataE), pacote: pacote, email: email, telefone: telefone,
       assin: assin, localD: localD, aut: aut, dataP: fmtDate(dataP),
       obs: obs, pgtoInfo: pgtoInfo, isParto: isParto, horario: horario,
-      qtdFotos: qtdFotos, instagram: instagram, endereco: endereco, momentoFamilia: momentoFamilia,
+      qtdFotos: qtdFotos, instagram: instagram, endereco: endereco,
+      momentoFamilia: momentoFamilia, acompanhante: acomp, medico: medico,
+      hospital: hospital, viaParto: viaParto, desejaVideo: desejaVideo,
       bairro: bairro, album: album, albumObs: albumObs,
       valorFinal: valorFinal, reservaFinal: reservaFinal,
       dataGeracao: new Date().toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'})
