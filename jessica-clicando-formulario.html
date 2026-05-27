@@ -708,7 +708,7 @@
         <div style="display:flex;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--beige-light);">
           <div class="field" style="flex:1">
             <label>Valor total (R$) <span>*</span></label>
-            <input type="text" id="valor_parto" placeholder="Ex: R$ 1.750,00">
+            <input type="text" id="valor_parto" placeholder="R$ 0,00" inputmode="numeric" oninput="maskMoeda(this)" onkeyup="maskMoeda(this)">
           </div>
           <div class="field" style="flex:1">
             <label>Reserva (R$)</label>
@@ -783,7 +783,7 @@
           <div style="display:flex;gap:10px;margin-top:10px;">
             <div class="field" style="flex:1">
               <label>Valor total (R$) <span>*</span></label>
-              <input type="text" id="valor_avista" placeholder="Ex: R$ 600,00">
+              <input type="text" id="valor_avista" placeholder="R$ 0,00" inputmode="numeric" oninput="maskMoeda(this)" onkeyup="maskMoeda(this)">
             </div>
             <div class="field" style="flex:1">
               <label>Reserva (R$)</label>
@@ -804,7 +804,7 @@
           <div style="display:flex;gap:10px;margin-top:10px;">
             <div class="field" style="flex:1">
               <label>Valor total (R$) <span>*</span></label>
-              <input type="text" id="valor_parcelado" placeholder="Ex: R$ 600,00">
+              <input type="text" id="valor_parcelado" placeholder="R$ 0,00" inputmode="numeric" oninput="maskMoeda(this)" onkeyup="maskMoeda(this)">
             </div>
             <div class="field" style="flex:1">
               <label>Número de parcelas</label>
@@ -1102,6 +1102,15 @@
   function atualizarNome(val) {
     var el = document.getElementById('aut_nome_live');
     if (el) el.textContent = val || '___________________________';
+  }
+
+  function maskMoeda(el) {
+    var v = el.value.replace(/\D/g, '');
+    if (v.length === 0) { el.value = ''; return; }
+    v = (parseInt(v, 10) / 100).toFixed(2);
+    v = v.replace('.', ',');
+    v = v.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    el.value = 'R$ ' + v;
   }
 
   function maskCPF(el) {
@@ -1750,6 +1759,12 @@
     if (d.dataP && d.dataP !== '—') row('Data Prevista:', d.dataP);
     if (!d.isParto && d.pacote) row('Pacote / Sessão:', d.pacote);
     if (!d.isParto && d.qtdFotos) row('Qtd. de Fotos:', d.qtdFotos);
+    if (d.isParto && d.acompanhante) row('Acompanhante:', d.acompanhante);
+    if (d.isParto && d.medico) row('Médico(a):', d.medico);
+    if (d.isParto && d.hospital) row('Hospital:', d.hospital);
+    if (d.isParto && d.viaParto) row('Via de Parto:', d.viaParto);
+    if (d.isParto && d.desejaVideo) row('Deseja Vídeo:', d.desejaVideo);
+    if (d.isParto && d.momentoFamilia) row('Momento em Família:', d.momentoFamilia);
     row('Autorização de Imagem:', d.aut);
     y += 2;
 
@@ -1777,13 +1792,63 @@
 
     if (d.isParto) {
       clause('1', 'Natureza do Serviço',
-        'Trata-se de fotografia documental e espontânea, realizada com discrição e respeito às orientações da equipe médica. Bebês em UTI Neonatal não podem ser fotografados. Na cesárea, o registro inicia após a anestesia; no parto normal, a partir de 6–7 cm de dilatação.');
-      clause('2', 'Responsabilidade de Aviso',
-        'É responsabilidade da família comunicar o início do trabalho de parto ou cesárea de emergência com antecedência. Caso a fotógrafa não chegue a tempo por falta de aviso, será cobrado 70% do valor. Disponibilidade: 10 dias antes e após a DPP.');
+        'Trata-se de fotografia documental e espontânea. As imagens são produzidas com discrição e respeito às orientações da equipe médica. Bebês em UTI Neonatal não podem ser fotografados por questões de segurança médica. Na cesárea, o registro inicia após a anestesia; no parto normal, a partir de 6-7 cm de dilatação.');
+      clause('2', 'Responsabilidade de Aviso e Disponibilidade',
+        'É responsabilidade da família comunicar o início do trabalho de parto ou a cesárea de emergência com antecedência suficiente. Caso a fotógrafa não chegue a tempo por falta de aviso, será cobrado 70% do valor contratado. O período de disponibilidade para parto normal é de 10 dias antes e após a DPP.');
       clause('3', 'Cancelamento e Alterações',
-        'Não há devolução em caso de desistência. Alterações com mais de 5 dias por força maior convertem 70% em crédito para sessão em até 6 meses. Cesárea com atraso superior a 2 horas implica taxa adicional de R$ 120,00.');
-      clause('4', 'Entrega',
-        'Mínimo 40 fotos em até 30 dias via link digital. Vídeo (aprox. 1 min) em até 45 dias. As fotografias são de autoria de Jessica Clicando Fotografia.');
+        'Não há devolução em caso de desistência. Alterações com mais de 5 dias de antecedência por força maior podem converter 70% do valor em crédito para sessão em até 6 meses. Cesárea agendada com atraso superior a 2 horas implica taxa adicional de R$ 120,00.');
+      clause('4', 'Entrega e Direitos de Imagem',
+        'Mínimo de 40 fotos entregues em até 30 dias via link digital. Vídeo melhores momentos (formato vertical, aprox. 1 min) em até 45 dias. Album/Quadro em até 45 dias úteis após escolha. Prazo de reposição em caso de perda: 60 dias. As fotografias são de autoria de Jessica Clicando Fotografia.');
+
+      // Seção: Como Funciona
+      section('Fotografia de Parto — Como Funciona');
+      var comoFunciona = 'Trata-se de uma fotografia documental. Em 90% do tempo não dirigimos as fotos, são espontâneas. Sempre que possível fazemos fotos dos detalhes (pezinhos, mãozinhas) e com a família, porém tratando-se de um centro médico, respeitamos todos os momentos e orientações da equipe de enfermagem. Se o bebê precisar ficar na UTI Neonatal, não podemos fotografá-lo por questões de segurança médica e saúde. Caso haja lembrancinhas a serem entregues a familiares, deixe tudo preparado antes do bebê nascer para que possamos registrar também.';
+      var comoLines = doc.splitTextToSize(comoFunciona, cw);
+      comoLines.forEach(function(line) { checkPage(); doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(90,90,90); doc.text(line, margin, y); y += 4.5; });
+      y += 3;
+
+      doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(26,26,26);
+      doc.text('Cesárea:', margin, y); y += 5;
+      doc.setFont('helvetica','normal'); doc.setTextColor(90,90,90);
+      var cesarText = 'O período fotografado é após a anestesia, nascimento do bebê, primeiros cuidados no centro cirúrgico, medida, pesagem e com os pais. Não retornamos para o quarto.';
+      var cesarLines = doc.splitTextToSize(cesarText, cw);
+      cesarLines.forEach(function(line) { checkPage(); doc.text(line, margin, y); y += 4.5; });
+      y += 3;
+
+      doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(26,26,26);
+      doc.text('Parto Normal:', margin, y); y += 5;
+      doc.setFont('helvetica','normal'); doc.setTextColor(90,90,90);
+      var normalText = 'A partir de 6-7 cm de dilatação, nascimento e primeiros cuidados como medida, peso e com os pais. Cada parto é único e cada equipe médica trabalha de uma maneira — não podemos interferir. As fotos são em sua maioria espontâneas. O momento do nascimento é único e inesquecível. Fotografamos com discrição e carinho para que você e sua família possam se lembrar desse dia tão especial.';
+      var normalLines = doc.splitTextToSize(normalText, cw);
+      normalLines.forEach(function(line) { checkPage(); doc.text(line, margin, y); y += 4.5; });
+      y += 4;
+
+      // Seção: Termos de Disponibilidade
+      section('Termos de Disponibilidade — Partos Normal e Cesárea');
+      var termos = [
+        '1. Para casos de desistência não há devolução do valor pago.',
+        '2. Se houver alteração na data do parto com mais de 5 dias de antecedência e por motivos de força maior não houver tempo hábil para o atendimento, 70% do valor poderá ser convertido em crédito para sessão fotográfica em até 6 meses.',
+        '3. Se contratado parto normal e houver agendamento antecipado de cesárea (avisado antes de 30 dias), o valor considerado poderá ser o da cesárea emergencial.',
+        '4. Se houver trabalho de parto dentro do período de disponibilidade (10 dias antes e depois da DPP) e for necessária uma cesárea, será considerado o valor para parto normal.',
+        '5. Se houver alteração na data/horário agendada, o valor considerado é o de Cesárea Emergencial 24h.',
+        '6. Para contratação de cesárea emergência 24h, se não houver tempo hábil para o registro, o valor pago poderá ser convertido em 70% de crédito para sessão posterior — não há devolução.',
+        '7. Entrega a partir de 40 fotos; prazo de reposição em caso de perda: até 60 dias.',
+        '8. Sempre verificar a disponibilidade nos hospitais e devidos trâmites se necessário.',
+        '9. Para parto normal, é responsabilidade da família (gestante/pai/acompanhante) informar sobre o trabalho de parto com tempo hábil de chegada. Para cesárea de emergência, avisar o quanto antes.',
+        '10. Se não chegarmos em tempo hábil por falta de aviso, será considerado o trabalho como realizado e cobrado 70% do valor contratado.',
+        '11. Hospitais atendidos: Santa Casa SJC, Vivalle Maternidade, Antoninho da Rocha Marmo, Policlin e Hospital São José. Não fotografamos em domicílio.',
+        '12. Se for cesárea agendada e houver atraso superior a 2 horas do horário contratado, será acrescida uma taxa de R$ 120,00 no valor final.',
+        '13. O vídeo é realizado em formato vertical via celular, duração aproximada de 1 minuto, enviado por link junto às fotos.'
+      ];
+      termos.forEach(function(t) {
+        checkPage();
+        doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(90,90,90);
+        var tLines = doc.splitTextToSize(t, cw);
+        tLines.forEach(function(line) { checkPage(); doc.text(line, margin, y); y += 4.5; });
+        y += 2;
+      });
+      y += 2;
+
     } else {
       clause('1', 'Prazos de Entrega',
         'Galeria para escolha: até 20 dias úteis. Após a escolha: até 20 dias úteis (se selecionadas em 30 dias). Após 60 dias sem seleção, enviamos a quantidade contratada. Álbum/Quadro: até 60 dias úteis após a escolha.');
