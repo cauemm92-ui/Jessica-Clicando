@@ -1496,7 +1496,8 @@
     var email    = document.getElementById('email').value;
     var telefone = document.getElementById('telefone').value;
     var assin    = sigCanvas ? sigCanvas.toDataURL('image/png') : '';
-    var localD   = document.getElementById('local_data').value;
+    var localDEl = document.getElementById('local_data');
+    var localD   = localDEl ? localDEl.value : '';
     var autR     = document.querySelector('input[name="aut_img"]:checked');
     var aut      = autR ? autR.value : '—';
     var dataP    = document.getElementById('data_prevista').value;
